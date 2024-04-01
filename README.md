@@ -10,3 +10,4 @@ Step 6 → Terraform Destroy
 # Added Webhook for Github
 #Updated Jenkins Cred
 #Updated Jenkins Fil
+#Email Notification Added
