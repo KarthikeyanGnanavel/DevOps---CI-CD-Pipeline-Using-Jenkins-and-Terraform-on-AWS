@@ -13,3 +13,4 @@ Step 6 → Terraform Destroy
 #Email Notification Added
 #Git Integration - Check font update
 Test Mail 
+Newman updated
