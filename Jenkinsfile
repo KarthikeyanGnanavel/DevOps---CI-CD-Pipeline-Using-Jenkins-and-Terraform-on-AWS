@@ -8,6 +8,24 @@ pipeline{
         SCANNER_HOME=tool 'sonar-scanner'
     }
     stages {
+        stage('Build Start Email Notification'){
+            steps{
+                emailext (
+				        	subject: "Jenkins PipeLine: ${JOB_NAME} Started - Build Number: #${BUILD_NUMBER}", 
+					        body: '''<html>
+						        		<body>
+							        		<p><b>Pipeline Name:</b> ${JOB_NAME}</p>
+								        	<p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+									        <p>Please check the <a href="${BUILD_URL}">console output</a> here.</p>
+								        </body> 
+							        </html>''',
+				    	    to: 'karthikgnanavel88@gmail.com,buvimasi98@gmail.com',
+					        from: 'jenkins@gmail.com',
+					        replyTo: 'jenkins@gmail.com', 
+					        mimeType: 'text/html'
+				        )
+            }
+        }
         stage('Cleaning Workspace'){
             steps{
                 cleanWs()
@@ -15,7 +33,7 @@ pipeline{
         }
         stage('Checkout from Git'){
             steps{
-                git branch: 'main', url: 'https://github.com/KarthikeyanGnanavel/DevOps---CI-CD-Pipeline-Using-Jenkins-and-Terraform-on-AWS.git'
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'Github', url: 'https://github.com/KarthikeyanGnanavel/DevOps---CI-CD-Pipeline-Using-Jenkins-and-Terraform-on-AWS.git']])
             }
         }
         stage("Sonarqube Analysis"){
@@ -73,5 +91,29 @@ pipeline{
                 sh 'docker run -d --name amazon-clone -p 3001:3000 karthik8898/amazon-clone:latest'
             }
         }
+        stage('Postman API Testing') {
+            steps {
+                sh 'newman run https://api.postman.com/collections/33996834-e9f443d8-3dd3-4d1c-b1b4-ea391a17ad23?access_key=PMAT-01HTE2BRV5NC968ZPC2RFVVV7A'
+            }
+        }
     }
+        post {
+		        always {
+			        	emailext (
+				        	subject: "Jenkins PipeLine: ${JOB_NAME} Completed - Build Number: #${BUILD_NUMBER}", 
+					        body: '''<html>
+						        		<body>
+						    	    	    <p><b>Pipeline Name:</b> ${JOB_NAME}</p>
+							            	<p><b>Build Status:<a style=color:blue>${BUILD_STATUS}!!</a></b></p>
+								    	    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+									        <p>Please check the <a href="${BUILD_URL}">console output</a> to view the results.</p>
+								        </body>  
+							         </html>''',
+				    	    to: 'karthikgnanavel88@gmail.com,buvimasi98@gmail.com',
+					        from: 'jenkins@gmail.com',
+					        replyTo: 'jenkins@gmail.com', 
+					        mimeType: 'text/html'
+				        )
+		               }
+	    }
 }
