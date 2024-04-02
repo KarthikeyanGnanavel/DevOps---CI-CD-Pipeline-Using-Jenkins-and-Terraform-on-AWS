@@ -14,3 +14,4 @@ Step 6 → Terraform Destroy
 #Git Integration - Check font update
 Test Mail 
 Newman updated
+API Testing Added
