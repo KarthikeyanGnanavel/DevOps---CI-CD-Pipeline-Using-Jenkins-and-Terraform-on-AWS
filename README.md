@@ -15,3 +15,4 @@ Step 6 → Terraform Destroy
 Test Mail 
 Newman updated
 API Testing Added
+Before after email notification
