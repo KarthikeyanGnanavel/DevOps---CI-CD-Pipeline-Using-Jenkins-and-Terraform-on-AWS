@@ -93,7 +93,7 @@ pipeline{
         }
         stage('Postman API Testing') {
             steps {
-                sh 'newman run https://api.postman.com/collections/33996834-e9f443d8-3dd3-4d1c-b1b4-ea391a17ad23?access_key=PMAT-01HTE2BRV5NC968ZPC2RFVVV7A'
+                sh 'newman run https://api.postman.com/collections/33996834-914fc6e6-f403-444b-8687-7ae2943591ba?access_key=PMAT-01HVPREVMNMH4H917P2Q2B5SN3'
             }
         }
     }
