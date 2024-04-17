@@ -18,3 +18,4 @@ API Testing Added
 Before after email notification
 Grafana Fix
 Read Me Update
+Mail update
