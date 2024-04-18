@@ -8,7 +8,7 @@ pipeline{
         SCANNER_HOME=tool 'sonar-scanner'
     }
     stages {
-        stage('Build Start Email Notification'){
+        stage('Build Start - Email Notification'){
             steps{
                 emailext (
 				        	subject: "Jenkins PipeLine: ${JOB_NAME} Started - Build Number: #${BUILD_NUMBER}", 
@@ -57,13 +57,13 @@ pipeline{
                 sh "npm install"
             }
         }
-        stage('OWASP FS SCAN') {
+        stage('OWASP - File System Scan') {
             steps {
                 dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
-        stage('TRIVY FS SCAN') {
+        stage('TRIVY FileSystem Scan') {
             steps {
                 sh "trivy fs . > trivyfs.txt"
             }
@@ -79,12 +79,12 @@ pipeline{
                 }
             }
         }
-        stage("TRIVY"){
+        stage("TRIVY - Docker Image Scan"){
             steps{
                 sh "trivy image karthik8898/amazon-clone:latest > trivyimage.txt" 
             }
         }
-        stage('Deploy to container'){
+        stage('Deploy to container - EC2'){
             steps{
 				sh 'docker stop amazon-clone'
 				sh 'docker rm amazon-clone'
