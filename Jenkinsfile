@@ -19,7 +19,7 @@ pipeline{
 									        <p>Please check the <a href="${BUILD_URL}">console output</a> here.</p>
 								        </body> 
 							        </html>''',
-				    	    to: 'karthikgnanavel88@gmail.com,shrikanaga5@gmail.com',
+				    	    to: 'karthikgnanavel88@gmail.com,benjaminbabyjacob@gmail.com,shrikanaga5@gmail.com,nikhillal270@gmail.com,minnugibi81@gmail.com',
 					        from: 'jenkins@gmail.com',
 					        replyTo: 'jenkins@gmail.com', 
 					        mimeType: 'text/html'
@@ -93,7 +93,7 @@ pipeline{
         }
         stage('Postman API Testing') {
             steps {
-                sh 'newman run https://api.postman.com/collections/33996834-914fc6e6-f403-444b-8687-7ae2943591ba?access_key=PMAT-01HVPREVMNMH4H917P2Q2B5SN3'
+                sh 'newman run https://api.postman.com/collections/33996834-6b836ee9-b717-465e-9440-37c4bf100948?access_key=PMAT-01HVSHE4JAEA1GYKFM1B4QPJ5G'
             }
         }
     }
@@ -109,7 +109,7 @@ pipeline{
 									        <p>Please check the <a href="${BUILD_URL}">console output</a> to view the results.</p>
 								        </body>  
 							         </html>''',
-				    	    to: 'karthikgnanavel88@gmail.com,shrikanaga5@gmail.com',
+				    	    to: 'karthikgnanavel88@gmail.com,benjaminbabyjacob@gmail.com,shrikanaga5@gmail.com,nikhillal270@gmail.com,minnugibi81@gmail.com',
 					        from: 'jenkins@gmail.com',
 					        replyTo: 'jenkins@gmail.com', 
 					        mimeType: 'text/html'
