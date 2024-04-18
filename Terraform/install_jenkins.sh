@@ -12,6 +12,15 @@ sudo apt-get install jenkins -y
 sudo systemctl start jenkins
 sudo systemctl status jenkins
 
+#newman installation
+sudo apt-get install npm
+sudo curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install nodejs -y
+sudo dpkg --configure -a
+sudo apt autoremove
+sudo apt clean
+sudo npm install -g newman
+
 #install docker
 sudo apt-get update
 sudo apt-get install docker.io -y
