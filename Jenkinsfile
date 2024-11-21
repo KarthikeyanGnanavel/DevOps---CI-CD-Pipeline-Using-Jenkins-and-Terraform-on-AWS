@@ -6,6 +6,7 @@ pipeline {
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
+        POSTMAN_ACCESS_KEY = credentials('POSTMAN_ACCESS_KEY')
     }
     stages {
 	    stage('Build Start Email Notification'){
@@ -102,7 +103,7 @@ pipeline {
                 script {
                     sh 'npm install newman-reporter-html'
                     // Run Postman collection and capture output in text and report in JUnit/HTML
-                    sh 'newman run https://api.postman.com/collections/33996834-e6157687-8644-4f85-aeee-fd6796eaaebc?access_key=REDACTED --reporters junit,html --reporter-junit-export newman-report.xml --reporter-html-export newman-report.html > newman-output.txt'
+                    sh 'newman run https://api.postman.com/collections/33996834-e6157687-8644-4f85-aeee-fd6796eaaebc?access_key=$POSTMAN_ACCESS_KEY --reporters junit,html --reporter-junit-export newman-report.xml --reporter-html-export newman-report.html > newman-output.txt'
                 }
                 // Archive the output file and the generated reports
                 archiveArtifacts artifacts: 'newman-output.txt, newman-report.xml, newman-report.html'
