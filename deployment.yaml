@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: amazon
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amazon-clone-deployment
+  namespace: amazon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amazon-clone
+  template:
+    metadata:
+      labels:
+        app: amazon-clone
+    spec:
+      containers:
+      - name: amazon-clone
+        image: karthik8898/amazon-clone:latest
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: amazon-clone-service
+  namespace: amazon
+spec:
+  selector:
+    app: amazon-clone
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer

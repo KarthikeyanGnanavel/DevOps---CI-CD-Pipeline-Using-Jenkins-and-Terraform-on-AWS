@@ -20,6 +20,7 @@ sudo dpkg --configure -a
 sudo apt autoremove
 sudo apt clean
 sudo npm install -g newman
+sudo npm install -g newman-reporter-html
 
 #install docker
 sudo apt-get update

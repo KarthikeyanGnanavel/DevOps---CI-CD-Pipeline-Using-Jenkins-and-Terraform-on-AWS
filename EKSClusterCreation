@@ -1,0 +1,16 @@
+eksctl create cluster --name amazon-clone-cluster --region us-east-1 --nodegroup-name amazon-clone-nodes --node-type t3.medium --nodes 1 --nodes-min 1 --nodes-max 1 --managed
+
+Update User with Permission:
+	Go to the IAM service in the AWS Console.
+	Find the IAM user or role you're using to access EKS (in your case, it's the root user).
+	Attach the following policies:
+	AmazonEKSClusterPolicy
+	AmazonEKSWorkerNodePolicy
+	AmazonEC2ContainerRegistryReadOnly (if you're pulling images from ECR)
+
+aws eks update-kubeconfig --name amazon-clone-cluster --region us-east-1
+
+kubectl apply -f deployment.yaml
+
+kubectl get all -n amazon
+
