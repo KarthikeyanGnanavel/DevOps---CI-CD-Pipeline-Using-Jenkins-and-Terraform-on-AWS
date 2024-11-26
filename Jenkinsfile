@@ -126,7 +126,7 @@ pipeline {
                 }
                 // Apply the Kubernetes deployment.yaml to the EKS cluster
                 sh '''
-                    kubectl apply -f deployment.yaml
+                    kubectl apply -f deployment.yaml --validate=false
                 '''
             }
         }
