@@ -132,17 +132,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Describe EKS Cluster') {
-            steps {
-                script {
-                    // Run AWS CLI command to interact with EKS
-                    withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        sh "aws eks describe-cluster --name amazon-clone-cluster"
-                    }
-                }
-            }
-        }
         stage('Configure kubectl') {
             steps {
                 script {
@@ -159,7 +148,7 @@ pipeline {
             steps {
                 script {
                     // Apply the deployment.yaml file to your Kubernetes cluster
-                    sh "kubectl apply -f deployment.yaml --validate=false"  // Disable validation
+                    //sh "kubectl apply -f deployment.yaml --validate=false"  // Disable validation
                 }
             }
         }
