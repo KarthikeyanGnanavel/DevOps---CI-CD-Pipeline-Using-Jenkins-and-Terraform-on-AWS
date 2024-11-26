@@ -14,3 +14,74 @@ kubectl apply -f deployment.yaml
 
 kubectl get all -n amazon
 
+
+
+Steps to Integrate EKS to Jenkins EC2:
+Create Role:
+
+In the left-hand sidebar, click on Roles, then click Create role.
+Select AWS service as the trusted entity type and choose EC2 since Jenkins is running on an EC2 instance.
+Click Next: Permissions.
+Attach the Policies:
+
+In the policy search bar, add the following policies:
+AmazonEKSClusterPolicy: For interacting with the EKS cluster.
+AmazonEKSWorkerNodePolicy: For interacting with worker nodes.
+AmazonEC2ContainerRegistryReadOnly: (Optional) If you're using ECR to pull images.
+You can also add additional policies like AmazonEC2ContainerRegistryPowerUser if you need full ECR access.
+Review and Create:
+
+After selecting the policies, click Next: Tags (optional), then click Next: Review.
+Name your role something like Jenkins-EKS-Access-Role, then click Create Role.
+Step 2: Attach the IAM Role to Your EC2 Instance
+Navigate to EC2 Instances:
+
+Go to the EC2 Console in AWS.
+Attach the Role:
+
+Select the EC2 instance running Jenkins from the Instances tab.
+Under Actions, select Security > Modify IAM Role.
+Choose the Jenkins-EKS-Access-Role you just created.
+Click Update IAM role.
+Step 3: Install AWS CLI on Your EC2 Instance
+Ensure that AWS CLI is installed on the Jenkins EC2 instance so that it can communicate with EKS:
+
+bash
+Copy code
+# For Amazon Linux 2 or RHEL-based
+sudo yum install aws-cli -y
+
+# For Ubuntu
+sudo apt-get install awscli -y
+After installation, verify the AWS CLI installation with:
+
+bash
+Copy code
+aws --version
+Step 4: Update kubeconfig in Jenkins Pipeline
+Now that your EC2 instance has the correct IAM role attached, you can update your Jenkins pipeline to automatically configure kubectl for EKS. In the pipeline, add the aws eks update-kubeconfig command to set up the kubeconfig for interacting with the EKS cluster.
+
+Here’s how you can add it to the Jenkins pipeline:
+
+groovy
+Copy code
+stage('Deploy to EKS') {
+    steps {
+        script {
+            // Ensure AWS CLI is configured with the IAM role
+            sh '''
+                aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name amazon-clone-cluster
+            '''
+        }
+        // Apply the Kubernetes deployment.yaml to the EKS cluster
+        sh '''
+            kubectl apply -f deployment.yaml
+        '''
+    }
+}
+Explanation:
+${AWS_DEFAULT_REGION} should be set to your AWS region, such as us-west-2.
+amazon-clone-cluster is the name of your EKS cluster (replace it with the actual cluster name).
+deployment.yaml is the Kubernetes manifest for deploying your app.
+Step 5: Test the Pipeline
+With the IAM role properly set up and the pipeline updated, run the Jenkins pipeline. Jenkins should now be able to interact with your EKS cluster, update the kubeconfig using the aws eks command, and apply the Kubernetes deployment using kubectl.
