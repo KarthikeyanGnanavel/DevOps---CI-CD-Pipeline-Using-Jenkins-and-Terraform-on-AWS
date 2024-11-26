@@ -101,23 +101,23 @@ pipeline {
                 sh 'docker ps'
             }
         }
-        // stage('Postman API Testing') {
-        //     steps {
-        //         script {
-        //             sh 'npm install -g newman-reporter-html'
-        //             // Run Postman collection and capture output in text and report in JUnit/HTML
-        //             sh 'newman run https://api.postman.com/collections/33996834-e6157687-8644-4f85-aeee-fd6796eaaebc?access_key=$POSTMAN_ACCESS_KEY --reporters junit,html --reporter-junit-export newman-report.xml --reporter-html-export newman-report.html > newman-output.txt'
-        //         }
-        //         // Archive the output file and the generated reports
-        //         archiveArtifacts artifacts: 'newman-output.txt, newman-report.xml, newman-report.html'
+        stage('Postman API Testing') {
+            steps {
+                script {
+                    sh 'npm install -g newman-reporter-html'
+                    // Run Postman collection and capture output in text and report in JUnit/HTML
+                    sh 'newman run https://api.postman.com/collections/33996834-e6157687-8644-4f85-aeee-fd6796eaaebc?access_key=$POSTMAN_ACCESS_KEY --reporters junit,html --reporter-junit-export newman-report.xml --reporter-html-export newman-report.html > newman-output.txt'
+                }
+                // Archive the output file and the generated reports
+                archiveArtifacts artifacts: 'newman-output.txt, newman-report.xml, newman-report.html'
                 
-        //         // Optionally, publish HTML report in Jenkins
-        //         publishHTML(target: [
-        //             reportName: 'Postman Test Report',
-        //             reportDir: '.',
-        //             reportFiles: 'newman-report.html'
-        //         ])
-        //     }
+                // Optionally, publish HTML report in Jenkins
+                publishHTML(target: [
+                    reportName: 'Postman Test Report',
+                    reportDir: '.',
+                    reportFiles: 'newman-report.html'
+                ])
+            }
         stage('Set up AWS CLI') {
             steps {
                 script {
