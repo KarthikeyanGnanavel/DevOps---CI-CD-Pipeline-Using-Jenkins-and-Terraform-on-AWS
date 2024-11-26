@@ -8,6 +8,7 @@ pipeline {
         SCANNER_HOME = tool 'sonar-scanner'
         POSTMAN_ACCESS_KEY = credentials('POSTMAN_ACCESS_KEY')
         AWS_DEFAULT_REGION = 'us-east-1'
+        AWS_CREDENTIALS = credentials('aws-credentials')
     }
     stages {
         stage('Build Start Email Notification') {
@@ -116,18 +117,29 @@ pipeline {
         //             reportFiles: 'newman-report.html'
         //         ])
         //     }
-        stage('Deploy to EKS') {
+        stage('Set up AWS CLI') {
             steps {
                 script {
-                    // Ensure AWS CLI is configured with the IAM role
-                    sh '''
-                        aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name amazon-clone-cluster
-                    '''
+                    // Use the AWS credentials to configure the AWS CLI
+                    withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        sh """
+                            aws configure set aws_access_key_id \${AWS_ACCESS_KEY_ID}
+                            aws configure set aws_secret_access_key \${AWS_SECRET_ACCESS_KEY}
+                            aws configure set region us-east-1
+                        """
+                    }
                 }
-                // Apply the Kubernetes deployment.yaml to the EKS cluster
-                sh '''
-                    kubectl apply -f deployment.yaml --validate=false
-                '''
+            }
+        }
+
+        stage('Describe EKS Cluster') {
+            steps {
+                script {
+                    // Run AWS CLI command to interact with EKS
+                    withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        sh "aws eks describe-cluster --name amazon-clone-cluster"
+                    }
+                }
             }
         }
     }
