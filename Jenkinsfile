@@ -10,22 +10,22 @@ pipeline {
         AWS_DEFAULT_REGION = 'us-east-1'
     }
     stages {
-	    stage('Build Start Email Notification'){
-            steps{
+        stage('Build Start Email Notification') {
+            steps {
                 emailext (
-				        	subject: "Jenkins PipeLine: ${JOB_NAME} Started - Build Number: #${BUILD_NUMBER}", 
-					        body: '''<html>
-						        		<body>
-							        		<p><b>Pipeline Name:</b> ${JOB_NAME}</p>
-								        	<p><b>Build Number:</b> ${BUILD_NUMBER}</p>
-									        <p>Please check the <a href="${BUILD_URL}">console output</a> here.</p>
-								        </body> 
-							        </html>''',
-				    	    to: 'karthikgnanavel88@gmail.com',
-					        from: 'jenkins@gmail.com',
-					        replyTo: 'jenkins@gmail.com', 
-					        mimeType: 'text/html'
-				        )
+                    subject: "Jenkins PipeLine: ${JOB_NAME} Started - Build Number: #${BUILD_NUMBER}", 
+                    body: '''<html>
+                        <body>
+                            <p><b>Pipeline Name:</b> ${JOB_NAME}</p>
+                            <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+                            <p>Please check the <a href="${BUILD_URL}">console output</a> here.</p>
+                        </body> 
+                    </html>''',
+                    to: 'karthikgnanavel88@gmail.com',
+                    from: 'jenkins@gmail.com',
+                    replyTo: 'jenkins@gmail.com', 
+                    mimeType: 'text/html'
+                )
             }
         }    
         stage('Cleaning Workspace') {
@@ -79,7 +79,7 @@ pipeline {
                 script {
                     withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
                         sh """
-                        docker build -t karthik8898/amazon-clone:latest .
+                        docker build -t karthik8898/amazon-clone:latest . 
                         docker push karthik8898/amazon-clone:latest
                         """
                     }
@@ -91,15 +91,15 @@ pipeline {
         //         sh "trivy image karthik8898/amazon-clone:latest > trivyimage.txt" 
         //     }
         // }
-        stage('Deploy to container'){
-            steps{
-				sh 'docker stop amazon-clone || true' 
-				sh 'docker rm amazon-clone || true' 
+        stage('Deploy to container') {
+            steps {
+                sh 'docker stop amazon-clone || true' 
+                sh 'docker rm amazon-clone || true' 
                 sh 'docker run -d --name amazon-clone -p 3000:3000 karthik8898/amazon-clone:latest'
                 sh 'docker ps'
             }
-		}
-		// stage('Postman API Testing') {
+        }
+        // stage('Postman API Testing') {
         //     steps {
         //         script {
         //             sh 'npm install -g newman-reporter-html'
@@ -131,24 +131,24 @@ pipeline {
                 '''
             }
         }
-   }
-   post {
-		        always {
-			        	emailext (
-				        	subject: "Jenkins PipeLine: ${JOB_NAME} Completed - Build Number: #${BUILD_NUMBER}", 
-					        body: '''<html>
-						        		<body>
-						    	    	    <p><b>Pipeline Name:</b> ${JOB_NAME}</p>
-							            	<p><b>Build Status:<a style=color:blue>${BUILD_STATUS}!!</a></b></p>
-								    	    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
-									        <p>Please check the <a href="${BUILD_URL}">console output</a> to view the results.</p>
-								        </body>  
-							         </html>''',
-				    	    to: 'karthikgnanavel88@gmail.com',
-					        from: 'jenkins@gmail.com',
-					        replyTo: 'jenkins@gmail.com', 
-					        mimeType: 'text/html'
-				        )
-		               }
-	    }
+    }
+    post {
+        always {
+            emailext (
+                subject: "Jenkins PipeLine: ${JOB_NAME} Completed - Build Number: #${BUILD_NUMBER}", 
+                body: '''<html>
+                    <body>
+                        <p><b>Pipeline Name:</b> ${JOB_NAME}</p>
+                        <p><b>Build Status:<a style=color:blue>${BUILD_STATUS}!!</a></b></p>
+                        <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+                        <p>Please check the <a href="${BUILD_URL}">console output</a> to view the results.</p>
+                    </body>  
+                </html>''',
+                to: 'karthikgnanavel88@gmail.com',
+                from: 'jenkins@gmail.com',
+                replyTo: 'jenkins@gmail.com', 
+                mimeType: 'text/html'
+            )
+        }
+    }
 }
