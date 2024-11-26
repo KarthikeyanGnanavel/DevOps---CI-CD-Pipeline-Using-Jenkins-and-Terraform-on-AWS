@@ -33,13 +33,15 @@ sudo systemctl restart jenkins
 docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 
 #install Kubectl and eksctl
-curl -LO "https://dl.k8s.io/release/v1.26.3/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/release/v1.29.11/bin/linux/amd64/kubectl"
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
 kubectl version --client
-sudo apt install awscli -y
-aws --version
-
+rm -rf ~/.aws/cli/cache/
+# Install AWS CLI version 2
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 
 # install trivy
 sudo apt-get install wget apt-transport-https gnupg lsb-release -y
