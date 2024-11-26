@@ -9,6 +9,7 @@ pipeline {
         POSTMAN_ACCESS_KEY = credentials('POSTMAN_ACCESS_KEY')
         AWS_DEFAULT_REGION = 'us-east-1'
         AWS_CREDENTIALS = credentials('aws-credentials')
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
     stages {
         stage('Build Start Email Notification') {
@@ -75,18 +76,18 @@ pipeline {
         //         archiveArtifacts artifacts: 'trivyfs.txt'
         //     }
         // }
-        stage("Docker Build & Push") {
-            steps {
-                script {
-                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
-                        sh """
-                        docker build -t karthik8898/amazon-clone:latest . 
-                        docker push karthik8898/amazon-clone:latest
-                        """
-                    }
-                }
-            }
-        }
+        // stage("Docker Build & Push") {
+        //     steps {
+        //         script {
+        //             withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+        //                 sh """
+        //                 docker build -t karthik8898/amazon-clone:latest . 
+        //                 docker push karthik8898/amazon-clone:latest
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
         // stage("TRIVY"){
         //     steps{
         //         sh "trivy image karthik8898/amazon-clone:latest > trivyimage.txt" 
@@ -158,7 +159,7 @@ pipeline {
             steps {
                 script {
                     // Apply the deployment.yaml file to your Kubernetes cluster
-                    sh "kubectl apply -f deployment.yaml"
+                    sh "kubectl apply -f deployment.yaml --validate=false"  // Disable validation
                 }
             }
         }
