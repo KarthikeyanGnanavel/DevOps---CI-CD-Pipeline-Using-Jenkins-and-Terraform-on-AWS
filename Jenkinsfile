@@ -142,6 +142,26 @@ pipeline {
                 }
             }
         }
+        stage('Configure kubectl') {
+            steps {
+                script {
+                    // Configure kubectl using the AWS CLI to get the cluster's kubeconfig
+                    withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        sh """
+                            aws eks update-kubeconfig --name amazon-clone-cluster --region us-east-1
+                        """
+                    }
+                }
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Apply the deployment.yaml file to your Kubernetes cluster
+                    sh "kubectl apply -f deployment.yaml"
+                }
+            }
+        }
     }
     post {
         always {
