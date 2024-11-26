@@ -118,6 +118,7 @@ pipeline {
                     reportFiles: 'newman-report.html'
                 ])
             }
+        }
         stage('Set up AWS CLI') {
             steps {
                 script {
