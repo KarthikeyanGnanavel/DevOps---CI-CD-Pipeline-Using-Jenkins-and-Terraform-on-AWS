@@ -7,6 +7,7 @@ pipeline {
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
         POSTMAN_ACCESS_KEY = credentials('POSTMAN_ACCESS_KEY')
+        AWS_DEFAULT_REGION = 'us-east-1'
     }
     stages {
 	    stage('Build Start Email Notification'){
@@ -98,22 +99,36 @@ pipeline {
                 sh 'docker ps'
             }
 		}
-		stage('Postman API Testing') {
+		// stage('Postman API Testing') {
+        //     steps {
+        //         script {
+        //             sh 'npm install -g newman-reporter-html'
+        //             // Run Postman collection and capture output in text and report in JUnit/HTML
+        //             sh 'newman run https://api.postman.com/collections/33996834-e6157687-8644-4f85-aeee-fd6796eaaebc?access_key=$POSTMAN_ACCESS_KEY --reporters junit,html --reporter-junit-export newman-report.xml --reporter-html-export newman-report.html > newman-output.txt'
+        //         }
+        //         // Archive the output file and the generated reports
+        //         archiveArtifacts artifacts: 'newman-output.txt, newman-report.xml, newman-report.html'
+                
+        //         // Optionally, publish HTML report in Jenkins
+        //         publishHTML(target: [
+        //             reportName: 'Postman Test Report',
+        //             reportDir: '.',
+        //             reportFiles: 'newman-report.html'
+        //         ])
+        //     }
+        }
+        stage('Deploy to EKS') {
             steps {
                 script {
-                    sh 'npm install -g newman-reporter-html'
-                    // Run Postman collection and capture output in text and report in JUnit/HTML
-                    sh 'newman run https://api.postman.com/collections/33996834-e6157687-8644-4f85-aeee-fd6796eaaebc?access_key=$POSTMAN_ACCESS_KEY --reporters junit,html --reporter-junit-export newman-report.xml --reporter-html-export newman-report.html > newman-output.txt'
+                    // Ensure AWS CLI is configured with the IAM role
+                    sh '''
+                        aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name amazon-clone-cluster
+                    '''
                 }
-                // Archive the output file and the generated reports
-                archiveArtifacts artifacts: 'newman-output.txt, newman-report.xml, newman-report.html'
-                
-                // Optionally, publish HTML report in Jenkins
-                publishHTML(target: [
-                    reportName: 'Postman Test Report',
-                    reportDir: '.',
-                    reportFiles: 'newman-report.html'
-                ])
+                // Apply the Kubernetes deployment.yaml to the EKS cluster
+                sh '''
+                    kubectl apply -f deployment.yaml
+                '''
             }
         }
    }

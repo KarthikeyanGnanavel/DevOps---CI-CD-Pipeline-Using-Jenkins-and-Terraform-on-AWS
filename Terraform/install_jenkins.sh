@@ -32,6 +32,15 @@ sudo chmod 777 /var/run/docker.sock
 sudo systemctl restart jenkins
 docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 
+#install Kubectl and eksctl
+curl -LO "https://dl.k8s.io/release/v1.26.3/bin/linux/amd64/kubectl"
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+kubectl version --client
+sudo apt install awscli -y
+aws --version
+
+
 # install trivy
 sudo apt-get install wget apt-transport-https gnupg lsb-release -y
 wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
