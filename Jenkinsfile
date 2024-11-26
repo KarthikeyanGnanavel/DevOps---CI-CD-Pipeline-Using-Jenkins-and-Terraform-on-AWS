@@ -149,6 +149,7 @@ pipeline {
                 script {
                     // Apply the deployment.yaml file to your Kubernetes cluster
                     //sh "kubectl apply -f deployment.yaml --validate=false"  // Disable validation
+                    continue
                 }
             }
         }
