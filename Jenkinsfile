@@ -116,7 +116,6 @@ pipeline {
         //             reportFiles: 'newman-report.html'
         //         ])
         //     }
-        }
         stage('Deploy to EKS') {
             steps {
                 script {
