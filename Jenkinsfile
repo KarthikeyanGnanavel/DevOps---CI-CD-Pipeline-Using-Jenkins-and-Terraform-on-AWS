@@ -40,59 +40,59 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/KarthikeyanGnanavel/DevOps---CI-CD-Pipeline-Using-Jenkins-and-Terraform-on-AWS.git'
             }
         }
-        // stage("Sonarqube Analysis") {
-        //     steps {
-        //         withSonarQubeEnv('sonar-server') {
-        //             sh 'docker start sonar || docker run -d --name sonar -p 9000:9000 sonarqube:latest'
-        //             sh '''
-        //             $SCANNER_HOME/bin/sonar-scanner \
-        //             -Dsonar.projectName=Amazon \
-        //             -Dsonar.projectKey=Amazon
-        //             '''
-        //         }
-        //     }
-        // }
-        // stage("Quality Gate") {
-        //     steps {
-        //         script {
-        //             waitForQualityGate abortPipeline: true, credentialsId: 'jenkins'
-        //         }
-        //     }
-        // }
+        stage("Sonarqube Analysis") {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    sh 'docker start sonar || docker run -d --name sonar -p 9000:9000 sonarqube:latest'
+                    sh '''
+                    $SCANNER_HOME/bin/sonar-scanner \
+                    -Dsonar.projectName=Amazon \
+                    -Dsonar.projectKey=Amazon
+                    '''
+                }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: true, credentialsId: 'jenkins'
+                }
+            }
+        }
         stage('Install Dependencies') {
             steps {
                 sh "npm install"
             }
         }
-        // stage('OWASP FS SCAN') {
-        //     steps {
-        //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-        //         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-        //     }
-        // }
-        // stage('TRIVY FS SCAN') {
-        //     steps {
-        //         sh "trivy fs . > trivyfs.txt"
-        //         archiveArtifacts artifacts: 'trivyfs.txt'
-        //     }
-        // }
-        // stage("Docker Build & Push") {
-        //     steps {
-        //         script {
-        //             withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
-        //                 sh """
-        //                 docker build -t karthik8898/amazon-clone:latest . 
-        //                 docker push karthik8898/amazon-clone:latest
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
-        // stage("TRIVY"){
-        //     steps{
-        //         sh "trivy image karthik8898/amazon-clone:latest > trivyimage.txt" 
-        //     }
-        // }
+        stage('OWASP FS SCAN') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        stage('TRIVY FS SCAN') {
+            steps {
+                sh "trivy fs . > trivyfs.txt"
+                archiveArtifacts artifacts: 'trivyfs.txt'
+            }
+        }
+        stage("Docker Build & Push") {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        sh """
+                        docker build -t karthik8898/amazon-clone:latest . 
+                        docker push karthik8898/amazon-clone:latest
+                        """
+                    }
+                }
+            }
+        }
+        stage("TRIVY"){
+            steps{
+                sh "trivy image karthik8898/amazon-clone:latest > trivyimage.txt" 
+            }
+        }
         stage('Deploy to container') {
             steps {
                 sh 'docker stop amazon-clone || true' 
